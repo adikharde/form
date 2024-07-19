@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #tab{
+            /* width: 100%; */
+            margin-top: 20px;
+            background-color: bisque;
+           
+            
+        }
+        #tab,tr,th,td{
+            border: 2px solid black;
+            border-collapse: collapse;
+            
+            
+        }
+        #form{
+            border: 5px solid red;
+            background-color: beige;
+            
+            
+        }
+    </style>
+</head>
+<body>
+    <form id="form">
+        <input type="text" id="name" placeholder="Name"><br>
+        <input type="email" id="email" placeholder="Email"><br>
+        <input type="password" id="pwd" placeholder="Password"><br>
+        <!-- Radio button -->
+         <label>Gender</label> <br>
+         <input type="radio" id="male" value="male" name="gender">Male <br>
+         <input type="radio" id="female" value="female" name="gender">Female <br>
+         <!-- Checkboxes -->
+          <input type="checkbox" id="a" value="A">A <br>
+          <input type="checkbox" id="b" value="B">B <br>
+          <input type="checkbox" id="c" value="C">C <br>
+          <!-- Dropdown -->
+           <select  id="select">
+            <option selected disabled>Choose any one</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+           </select> <br>
+           <input type="submit" value="submit">
+    </form>
+    <table id="tab">
+        <thead>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Gender</th>
+            <th>checkbox</th>
+            <th>Dropdown</th>
+            
+           
+        </thead>
+        <tbody></tbody>
+
+
+    </table>
+    <script>
+         let editingRow = null;
+
+        document.getElementById("form").addEventListener("submit",(e)=>{
+            e.preventDefault()
+            
+            if (editingRow) {
+                updateRow(editingRow);
+            } else {
+                submitform();
+            }
+            document.getElementById("form").reset();
+            editingRow = null;
+        })
+        function submitform(){
+            let name=document.getElementById("name").value;
+            let email=document.getElementById("email").value;
+            let pwd=document.getElementById("pwd").value;
+
+            let cb=[];
+            let a=document.getElementById("a")
+            let b=document.getElementById("b")
+            let c=document.getElementById("c")
+            if(a.checked) cb.push(a.value)
+            if(b.checked) cb.push(b.value)
+            if(c.checked) cb.push(c.value)
+            let gender=""
+            let male=document.getElementById("male")
+            let female=document.getElementById("female")
+            if(male.checked) gender=male.value
+            if(female.checked) gender=female.value
+            let select=document.getElementById("select").value
+            let table=document.querySelector("#tab,tbody")
+            let row= table.insertRow()
+            row.innerHTML=`
+            <td>${name}</td>
+            <td>${email}</td>
+            <td>${pwd}</td>
+            <td>${gender}</td>
+            <td>${cb.join(",")}</td>
+            <td>${select}</td>
+            <td>
+                <button class="edit">Edit</button>
+                <button class="delete">Delete</button>
+                
+            </td>
+
+            `
+            row.querySelector(".edit").addEventListener("click",()=> editRow = (row))
+            row.querySelector(".delete").addEventListener("click",()=> deleteRow = (row))
+            table.appendChild(row)
+             
+        }
+        
+        
+        function editRow(row){
+            document.getElementById("name").value=row.cell[0].innerText
+            document.getElementById("email").value=row.cells[1].innerText
+            document.getElementById("pwd").value=row.cells[2].innerText
+            let gender = row.cells[3].innerText;
+            document.getElementById(gender.toLowerCase()).checked = true;
+
+            
+            let checkbox=row.cells[4].innerText.split(",")
+            document.getElementById("checkbox A").checked=checkbox.includes("A")
+            document.getElementById("checkbox B").checked=checkbox.includes("B")
+            document.getElementById("checkbox C").checked=checkbox.includes("C")
+            document.getElementById("select").value = row.cells[5].innerText;
+
+            editingRow = row;
+
+        }
+        function deleteRow(row) {
+            row.parentNode.removeChild(row);
+            console.log(deleteRow)
+        }
+        
+       
+    </script>
+</body>
+</html>
